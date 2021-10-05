@@ -5,6 +5,9 @@ date: "10/5/2021"
 output: github_document
 ---
 
+```{r}
+knitr::opts_chunk$set(fi.width = 6, fig.asp = 6, out.width = "90%")
+```
 
 ```{r include = FALSE}
 library(tidyverse)
@@ -154,6 +157,19 @@ weather_df %>%
   geom_density_ridges(alpha = 0.8, scale = 0.8) 
 ```
 
+## Embedding plots 
+can use cunk options to control figure vis
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = 0.3)
+```
+
+```{r, fig.width=12}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) + 
+  geom_point(alpha = 0.3)
+```
 
 
 
