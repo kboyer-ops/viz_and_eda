@@ -68,6 +68,55 @@ weather_df %>%
   facet_grid( . ~ name)
 ```
 
+One more scatter plot 
+```{r}
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, size = prcp)) + 
+  geom_point(alpha = 0.3) + 
+  facet_grid(. ~ name) + 
+  geom_smooth(se = FALSE) 
+```
+
+## Let's data manipulation as part of this 
+
+```{r}
+weather_df %>% 
+  filter(name == "CentralPark_NY") %>% 
+  mutate(
+    tmax = tmax * (9/5) + 32, 
+    tmin = tmin * (9/5) + 32
+  ) %>% 
+  ggplot(aes(x = date, y = tmax)) + 
+  geom_point() 
+```
+
+## Stack geoms 
+
+which geoms do you want? 
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_smooth()
+```
+
+With hexbins 
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_hex()
+
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_bin_2d()
+```
+
+
+
+
+
+
+
 
 
 

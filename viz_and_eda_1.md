@@ -114,3 +114,74 @@ weather_df %>%
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
 ![](viz_and_eda_1_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->
+
+One more scatter plot
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, size = prcp)) + 
+  geom_point(alpha = 0.3) + 
+  facet_grid(. ~ name) + 
+  geom_smooth(se = FALSE) 
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_smooth).
+
+    ## Warning: Removed 3 rows containing missing values (geom_point).
+
+![](viz_and_eda_1_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+## Let’s data manipulation as part of this
+
+``` r
+weather_df %>% 
+  filter(name == "CentralPark_NY") %>% 
+  mutate(
+    tmax = tmax * (9/5) + 32, 
+    tmin = tmin * (9/5) + 32
+  ) %>% 
+  ggplot(aes(x = date, y = tmax)) + 
+  geom_point() 
+```
+
+![](viz_and_eda_1_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+## Stack geoms
+
+which geoms do you want?
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_smooth()
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_smooth).
+
+![](viz_and_eda_1_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+With hexbins
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_hex()
+```
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_binhex).
+
+![](viz_and_eda_1_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_bin_2d()
+```
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_bin2d).
+
+![](viz_and_eda_1_files/figure-gfm/unnamed-chunk-9-2.png)<!-- -->
