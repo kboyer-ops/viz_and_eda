@@ -2,15 +2,16 @@
 title: "viz_eda_1"
 author: "Kaila Boyer"
 date: "10/5/2021"
-output: html_document
+output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ```{r include = FALSE}
 library(tidyverse)
 library(ggridges)
+```
+
+```{r}
+
 ```
 
