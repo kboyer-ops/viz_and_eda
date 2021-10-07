@@ -8,6 +8,8 @@ output: github_document
 ```{r include = FALSE}
 library(tidyverse)
 library(ggridges)
+library(viridis) 
+library(patchwork)
 ```
 
 Can include code in the beginning of a document that sets the themes/settings/color for all ggplots 
@@ -206,9 +208,80 @@ waikiki %>%
   ggplot(aes(x = date, y = tmax, color = name)) + 
   geom_point() + 
   geom_line(data = central_park)
+```
 
+## 'patchwork' package 
+
+```{r}
+ggp_tmax_tmin <- weather_df %>% 
+  ggplot(aes(x= tmin, y = tmax, color = name)) + 
+  geom_point(alpha = 0.3) +
+  theme(legend.position = "none")
+
+ggp_prcp_dens <- weather_df %>% 
+  filter(prcp > 0) %>% 
+  ggplot(aes(x = prcp, fill = name)) + 
+  geom_density(alpha = 0.3) + 
+  theme(legend.position = "none")
+
+ggp_tmax_date <- weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) + 
+  geom_point() + 
+  geom_smooth() + 
+  theme(legend.position = "none")
+
+((ggp_tmax_tmin + ggp_prcp_dens) / ggp_tmax_date)
+```
+
+## Data Manipulation 
+
+quick example on factors 
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_boxplot()
+
+weather_df %>% 
+  mutate(
+    name = fct_reorder(name, tmax)
+  ) %>% 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_boxplot()
+```
+
+What about tmax and tmin ... 
+
+```{r}
+weather_df %>% 
+  pivot_longer(
+    tmax:tmin, 
+    names_to = "obs", 
+    values_to = "temperature"
+  ) %>% 
+  ggplot(aes(x = temperature, fill = obs)) + 
+  geom_density(alpha = 0.3) + 
+  facet_grid(. ~ name)
+```
+needed to transform the data frame in order to make this kind of plot 
+
+
+```{r eval = FALSE}
+pup_data = 
+  read_csv("./data/FAS_pups.csv", col_types = "ciiiii") %>%
+  janitor::clean_names() %>%
+  mutate(sex = recode(sex, `1` = "male", `2` = "female")) 
+
+litter_data = 
+  read_csv("./data/FAS_litters.csv", col_types = "ccddiiii") %>%
+  janitor::clean_names() %>%
+  separate(group, into = c("dose", "day_of_tx"), sep = 3)
+
+fas_data = left_join(pup_data, litter_data, by = "litter_number") 
 
 ```
+
+
 
 
 
