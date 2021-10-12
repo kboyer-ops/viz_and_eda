@@ -33,3 +33,118 @@ weather_df =
   select(name, id, everything())
 ```
 
+
+## group_by
+
+```{r}
+weather_df %>% 
+  group_by(month, name) 
+```
+
+
+## count things
+
+```{r}
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarise(n_obs = n())
+
+weather_df %>% count(name)
+```
+
+Nice that summarise produces a data frame 
+can't use result of table() in other functions like ggplot
+
+```{r}
+weather_df %>% 
+  pull(name) %>% 
+  table()
+
+weather_df %>% 
+  janitor::tabyl(month, name)
+```
+
+
+## More general summaries
+
+let's count the means, look at SDs
+```{r}
+weather_df %>% 
+  group_by(name) %>% 
+  summarise(n_obs = n(), 
+            mean_tmax = mean(tmax, na.rm = T), 
+            sd_tmax = sd(tmax, na.rm = T))
+
+weather_df %>% 
+  drop_na() %>% 
+  group_by(name) %>% 
+  summarise(n_obs = n(), 
+            mean_tmax = mean(tmax))
+```
+
+```{r}
+# weather_df %>% 
+#   group_by(name, month) %>% 
+#   summarize(n_obs = n(),mean_tmax = mean(tmax, na.rm T)) %>% 
+#   ggplot(aes(x = month, y = mean_tmax))  +
+#   geom_line()
+
+
+weather_df %>% group_by(name) %>% 
+  summarise(n_obs = n(), 
+            mean_tmax = mean(tmax, na.rm = T)) %>% 
+  knitr::kable( digits = 2)
+```
+
+```{r}
+weather_df %>% group_by(name) %>% 
+  mutate(mean_tmax = mean(tmax, na.rm = T), 
+         centered_tmax = tmax - mean_tmax) %>% 
+  ggplot(aes(x = date, y = centered_tmax, color = name)) + 
+  geom_point()
+```
+
+```{r}
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    tmax_rank = min_rank(tmax)
+  ) %>% 
+  filter(tmax_rank < 2)
+
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    tmax_rank = min_rank(desc(tmax))
+  ) %>% 
+  filter(tmax_rank < 2)
+```
+
+## Lagged Variables 
+
+```{r}
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(lagged_tmax = lag(tmax, n =1), 
+         tmax_diff = tmax - lagged_tmax) %>% 
+  summarize(diff_sd = sd(tmax_diff, na.rm = T))
+```
+
+## Limitations
+what if 'summary' is a linear model 
+```{r}
+
+weather_df %>% 
+  group_by(name) %>% 
+  summarize(cor_tmin_tmax = cor(tmin, tmax, use = "complete"))
+
+weather_df %>% 
+  filter(name == "CentralPark_NY") %>% 
+  lm(tmax ~ tmin, data = .)
+
+weather_df %>% 
+  group_by(name) %>% 
+  summarize
+```
+
+
